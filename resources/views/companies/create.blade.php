@@ -20,19 +20,31 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Name" required>
+                        <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" placeholder="Name" required>
+                        @error('name')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="email@email.com">
+                        <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="email@email.com">
+                        @error('email')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="logo">Logo</label>
                         <input type="file" name="logo" id="logo" class="form-control-file">
+                        @error('logo')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="url">URL</label>
-                        <input type="text" name="url" id="url" placeholder="www.website.com" class="form-control">
+                        <input type="text" name="url" id="url" placeholder="www.website.com" class="form-control @error('url') is-invalid @enderror">
+                        @error('url')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">Create</button>

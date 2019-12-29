@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -39,10 +40,17 @@ class CompanyController extends Controller
         $validData = $this->validate($request, [
             'name' => 'required|min:3',
             'email' => 'sometimes|email',
-            'logo' => 'max_height:100|max_width:100',
+            'logo' => 'dimensions:max_height=100,max_width=100',
+            'url' => 'min:5|max:255'
         ]);
 
-        dd($validData);
+        if ($validData['logo']) {
+          $url = $request->file('logo')->store('logos','public');
+          $validData['logo'] = url($url);
+        }
+        $company = Company::create($validData);
+        $request->session()->flash('success', $company->name . ' was created!');
+        return redirect("/companies");
     }
 
     /**
@@ -53,7 +61,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+      return view('companies/show', compact('company'));
     }
 
     /**
@@ -87,6 +95,7 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        $company->delete();
+        return redirect("/companies");
     }
 }

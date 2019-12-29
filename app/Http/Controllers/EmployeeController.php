@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Company;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -12,9 +13,10 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Company $company)
     {
-        //
+      $employees = Employee::where('company_id', $company->id)->get();
+      return view('employees.index', compact('employees', 'company'));
     }
 
     /**
@@ -22,9 +24,9 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Company $company)
     {
-        //
+      return view('employees.create', compact('company'));
     }
 
     /**
@@ -33,9 +35,18 @@ class EmployeeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Company $company)
     {
-        //
+      $validData = $this->validate($request, [
+        'first_name' => 'required|min:3|max:255',
+        'last_name' => 'required|min:3|max:255',
+        'email' => 'required|email',
+        'phone' => 'required'
+      ]);
+
+      $employee = $company->employees()->create($validData);
+
+      return redirect(route('employees.index', $company));
     }
 
     /**
@@ -44,9 +55,9 @@ class EmployeeController extends Controller
      * @param  \App\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function show(Employee $employee)
+    public function show(Company $company, Employee $employee)
     {
-        //
+      return view('employees.show', compact('employee'));
     }
 
     /**
@@ -55,9 +66,9 @@ class EmployeeController extends Controller
      * @param  \App\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function edit(Employee $employee)
+    public function edit(Company $company, Employee $employee)
     {
-        //
+      return view('employees.edit', compact('employee'));
     }
 
     /**
@@ -67,9 +78,17 @@ class EmployeeController extends Controller
      * @param  \App\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, Company $company, Employee $employee)
     {
-        //
+      $validData = $this->validate($request, [
+        'first_name' => 'required|min:3|max:255',
+        'last_name' => 'required|min:3|max:255',
+        'phone' => 'required',
+        'email' => 'required|email'
+      ]);
+      $employee->update($validData);
+
+      return redirect(route('employees.show', [$company, $employee]));
     }
 
     /**
@@ -80,6 +99,7 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        $employee->destroy();
+        return redirect(route('employees.index', [$employee->company]));
     }
 }

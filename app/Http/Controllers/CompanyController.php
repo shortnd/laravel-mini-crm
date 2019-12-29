@@ -72,7 +72,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+      return view('companies.edit', compact('company'));
     }
 
     /**
@@ -84,7 +84,13 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
-        //
+      $validData = $this->validate($request, [
+        'name' => 'required|min:3|max:255',
+        'email' => 'required|email',
+        'url' => 'min:5|max:255'
+      ]);
+      $company->update($validData);
+      return redirect(route('companies.show', $company));
     }
 
     /**

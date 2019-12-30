@@ -64,6 +64,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="card-footer">
+                    {{ $companies->links() }}
+                </div>
             </div>
         </div>
     </div>
